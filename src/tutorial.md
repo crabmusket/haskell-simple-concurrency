@@ -53,6 +53,9 @@ You can also open modules in GHCI to play around with them in a REPL:
 
 Note that you cannot compile the example files directly, but I have provided a `Main.hs` file which runs all the examples, and which can be compiled into an executable if you wish.
 
+    $ ghc --make Main.hs
+    $ ./Main
+
 ## A brief word on syntax
 
 As a Haskeller learning Go, I found myself regularly forgetting that `<-` and `->` have different meanings in the two languages.
