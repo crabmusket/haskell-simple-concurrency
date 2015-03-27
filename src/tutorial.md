@@ -536,7 +536,15 @@ Notice that we could have written, instead:
     result <- selectNow [fastestHuman, robot]
 ```
 
-Let's run this code, as if it isn't a foregone conclusion:
+and that `selectNow` becomes trivial to implement in terms of `select`:
+
+``` haskell
+selectNow vars = do
+    var <- select vars
+    takeMVar var
+```
+
+Let's run the code, as if it isn't a foregone conclusion:
 
     $ runhaskell Ex7ComposableSelect.hs
     Bleep bloop, puny humans.
