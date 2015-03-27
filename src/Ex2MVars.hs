@@ -9,6 +9,7 @@ main = do
     message <- newEmptyMVar
 
     forkIO $ do
+        -- Pretend there is some actual work to do.
         sleepMs 5
         putStrLn "Sending message!"
         putMVar message "Do the thing!"
