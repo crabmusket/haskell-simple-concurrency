@@ -1,7 +1,7 @@
 module Ex1Threads where
 
 import Control.Concurrent (forkIO, threadDelay)
-import Control.Monad (sequence, void)
+import Data.Foldable (for_)
 
 main = do
     -- Synchronously perform some work.
@@ -20,7 +20,7 @@ main = do
     sleepMs 10
 
 -- A simple function that prints three messages with a little delay between them.
-print3MessagesFrom name = void (sequence (map printMessage [1..3]))
+print3MessagesFrom name = for_ [1..3] printMessage
     where printMessage i = do
             putStrLn (name ++ " number " ++ show i)
             sleepMs 1

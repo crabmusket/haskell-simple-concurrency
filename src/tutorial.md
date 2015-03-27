@@ -74,42 +74,24 @@ In this small program, we'll learn how to use `forkIO`, which is the Haskell equ
 
 ``` haskell
 import Control.Concurrent (forkIO, threadDelay)
-import Control.Monad (sequence, void)
+import Data.Foldable (for_)
 ```
-
-> **Erk, monads**
-> 
-> Don't panic!
-> `Control.Monad` is just a library implementing some useful combinators we'll use in a second.
-> I promise, this will be the last time you hear me say "monad".
 
 With those imports out of the way, let's write a simple `IO` action that prints some stuff:
 
 ``` haskell
-print3MessagesFrom name = void (sequence (map printMessage [1..3]))
+print3MessagesFrom name = for_ [1..3] printMessage
     where printMessage i = do
             putStrLn (name ++ " number " ++ show i)
             sleepMs 1
 ```
 
-> ##### Wait wait, too fast
+> ##### Why does `for` have an underscore?
 > 
-> Sorry, let me explain that a bit better.
-> `print3MessagesFrom` is a function that takes a single argument, `name`, and prints out `"<name> number <x>"` three times, where `x` counts from 1 to 3.
-> It looks a little messy, if you're not used to functional programming.
-> Let's read the top line after the `=` from the inside out:
-> 
->  * `map someFunction someList` says 'call `someFunction` on each element of the list', which you can probably guess in this case is `[1, 2, 3]`.
-> 
->  * Next, `sequence someList` simply performs all the `IO` actions in `someList`, in the order they come.
->    In this case, our list of `IO` actions is `[printMessage 1, printMessage 2, printMessage 3]`.
-> 
->  * Finally, `void someAction` simply says 'discard the return value of `someAction`, I don't want it!'.
->    We do this to signal explicitly that we are throwing away the return value, otherwise Haskell's type inference will remind us that we've forgotten about it!
-> 
-> Other little bits and pieces - `putStrLn` prints a `String` to standard output, and `sleepMs` is a utility function that pauses execution for some amount of milliseconds.
-> That's not so bad, right?
-> If you need a gentler and more in-depth introduction to `IO` actions, have a read of [this excellent article](http://blog.jle.im/entry/first-class-statements).
+> The underscore is simply a convention among Haskell's base libraries that the result of the comprehension is discarded.
+> It keeps the type-checker satisfied that we're not throwing away results we intended to keep.
+> And, you may also be wondering, why did we have to import it?
+> Many of Haskell's 'control structures' are actually just regular functions, and `for_` is no exception.
 
 We can call this in the usual synchronous fashion inside any other `IO` action:
 
@@ -248,6 +230,8 @@ Or, more concisely:
 > 
 > If you squint, it looks a bit like regular function application.
 > I won't go into too much depth here.
+> 
+> If you need a gentler and more in-depth introduction to `IO` actions, have a read of [this excellent article](http://blog.jle.im/entry/first-class-statements).
 
 [See the whole program](./Ex3Channels.hs) and the [GbE chapter on buffered channels](https://gobyexample.com/channel-buffering).
 
