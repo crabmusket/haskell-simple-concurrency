@@ -13,9 +13,13 @@ I'm writing this to:
  3. Hopefully reach out to interested non-Haskellers who may not know about some of these features.
     Ah yes, my secret motives are revealed.
 
-This tutorial will probably not end up covering STM (at least not for the forseeable future), even though it definitely counts as simple concurrency.
-This is simply because there's no real equivalent in Go by Example, so I'd have to actually think of my own tutorial structure.
-Ain't nobody got the energy for that.
+> **An aside**
+> 
+> This tutorial will probably not end up covering STM (at least not for the forseeable future), even though it definitely counts as simple concurrency.
+> This is simply because there's no real equivalent in Go by Example, so I'd have to actually think of my own tutorial structure.
+> Ain't nobody got the energy for that.
+
+## Contents
 
  * [Basic threading](#basic-threading)
  * [Thread synchronisation with MVars](#thread-synchronisation-with-mvars)
@@ -269,7 +273,7 @@ The code is fairly dumb, but the point is the use of `writeWOChan` and `readROCh
 If I were to try to use `readROChan` in `producer`, or even `writeChan` or `readChan` as we used in the [last tutorial](#channels), it'd be a type error.
 How did we make this happen?
 
-Essentially, we just make a wrapper type around `Chan` and only define certain operations on it.
+Essentially, we make a wrapper type around `Chan` and only define certain operations on it.
 We also take care not to export the constructor of this wrapper type, so that you can't pattern-match a normal `Chan` out of a `ReadOnlyChan` or `WriteOnlyChan`.
 
 The details are in [DirectedChannels.hs](./DirectedChannels.hs) should you care to read about them.
