@@ -49,7 +49,7 @@ import Control.Concurrent (forkIO, threadDelay)
 import Control.Monad (sequence, void)
 ```
 
-> **Erk, monads*
+> **Erk, monads**
 > 
 > Don't panic!
 > `Control.Monad` is just a library implementing some useful combinators we'll use in a second.
