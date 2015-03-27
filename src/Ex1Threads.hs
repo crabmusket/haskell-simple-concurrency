@@ -19,10 +19,11 @@ main = do
     -- Wait for threads to finish.
     sleepMs 10
 
+-- A simple function that prints three messages with a little delay between them.
 print3MessagesFrom name = void (sequence (map printMessage [1..3]))
     where printMessage i = do
             putStrLn (name ++ " number " ++ show i)
-            sleepMs 1 -- Opportunity for interleaving
+            sleepMs 1
 
 -- A utility function - threadDelay takes microseconds, which is slightly annoying.
 sleepMs n = threadDelay (n * 1000)
