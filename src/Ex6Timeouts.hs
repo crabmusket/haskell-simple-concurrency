@@ -14,7 +14,7 @@ main = do
     result <- selectNow [never, timer]
     putStrLn result
 
-    putStrLn "Using the selectOrTimeout wrapper:"
+    putStrLn "Using the selectNowOrTimeout wrapper:"
     result <- selectNowOrTimeout 5 [never]
     case result of
         Nothing -> putStrLn "Too slow!"
