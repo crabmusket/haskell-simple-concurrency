@@ -335,12 +335,17 @@ selectNow vars = do
 ```
 
 This function takes a list, `vars`, of `MVar`s.
-The meat of the function involves forking a bunch of threads (one for each `MVar`, in fact!), each of which acynchronously tries to take the value it was assigned, and then put that value into the `won` `MVar`.
+The meat of the function involves forking a bunch of threads (one for each `MVar`, in fact!), each of which asynchronously tries to take the value it was assigned, and then put that value into the `won` `MVar`.
 Meanwhile, the main thread waits for `won` to be filled, then returns the winner.
 
 > **You just created _how many_ threads?**
 > 
 > Don't panic, threads are lightweight.
+
+> **And what's this `forM`?**
+> 
+> I tried to slip that one past without you noticing.
+> You can basically read it as the `forEach` that's in most other languages.
 
 But the key thing to know about it is that it is _blocking_ - it will onyl return once it has a value from one of its `MVar`s, which is why I appended the `Now` to it.
 This is the same behaviour as Go's `select` construct, but the reason I chose to leave the name `select` free will become apparent in a [later tutorial](#composable-select).
