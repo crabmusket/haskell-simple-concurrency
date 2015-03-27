@@ -207,7 +207,7 @@ Or, more concisely:
     putStrLn =<< readChan messages
 ```
 
-> **`=<<`?**
+> **=<<?**
 > 
 > Some of you following along at home might have expected to be able to write something like
 > 
