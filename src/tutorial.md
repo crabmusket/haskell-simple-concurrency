@@ -25,6 +25,7 @@ I'm writing this to:
  * [Thread synchronisation with MVars](#thread-synchronisation-with-mvars)
  * [Channels](#channels)
  * [Directed channels](#directed-channels)
+ * [Select](#select)
 
 ## Running the code
 
@@ -294,3 +295,64 @@ The output of this program is probably pretty obvious:
     Dave.
 
 [See the whole program](./Ex4DirectedChannels.hs) and the [GbE chapter on directed channels](https://gobyexample.com/channel-directions).
+
+## Select
+
+Go has a built-in `select` statement that will wait on one of several channels, and perform some code depending on which one produced a result first (much like the POSIX `select` function).
+Haskell has no built-in feature for this, like it doesn't have directed channels - but again, we can write it ourselves if we're willing to put a little bit of time in.
+
+Let's start with how I intend the function to work.
+Since `select` is intended to receive a single result, we'll build it on top of `MVar`s rather than channels.
+So `select` should take a list of `MVar`s, and return the first value that is put into any of them.
+Like so:
+
+``` haskell
+main = do
+    item1 <- newEmptyMVar
+    item2 <- newEmptyMVar
+
+    putStrLn "Let the race begin!"
+    forkIO (worker "Harry" item1)
+    forkIO (worker "Sally" item2)
+
+    name <- selectNow [item1, item2]
+    putStrLn (name ++ " finished first!")
+```
+
+The `worker` function does some work, then returns its name, so we can see who did their work the quickest.
+It's not a very interesting function, so let's skip it.
+
+The interesting function, `selectNow`, is defined as follows.
+
+``` haskell
+selectNow vars = do
+    won <- newEmptyMVar
+    forM vars (\var -> forkIO (do
+        val <- takeMVar var
+        putMVar won val))
+    winner <- takeMVar won
+    return winner
+```
+
+This function takes a list, `vars`, of `MVar`s.
+The meat of the function involves forking a bunch of threads (one for each `MVar`, in fact!), each of which acynchronously tries to take the value it was assigned, and then put that value into the `won` `MVar`.
+Meanwhile, the main thread waits for `won` to be filled, then returns the winner.
+
+> **You just created _how many_ threads?**
+> 
+> Don't panic, threads are lightweight.
+
+But the key thing to know about it is that it is _blocking_ - it will onyl return once it has a value from one of its `MVar`s, which is why I appended the `Now` to it.
+This is the same behaviour as Go's `select` construct, but the reason I chose to leave the name `select` free will become apparent in a [later tutorial](#composable-select).
+
+So now we have the result we wanted!
+We can `selectNow` over several `MVar`s, and receive the first result.
+Let's run the full code:
+
+    $ runhaskell Ex5Select.hs
+    Let the race begin!
+    Sally finished first!
+
+Run it a few times to make sure the random number generator is working.
+
+[See the whole program](./Ex5Select.hs) and the [GbE chapter on select](https://gobyexample.com/select).
