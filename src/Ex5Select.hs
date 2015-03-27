@@ -18,7 +18,7 @@ main = do
     name <- select [item1, item2]
     putStrLn (name ++ " finished first!")
 
-
+-- Wait on each MVar in 'vars', and return the first value which is put into any of them.
 select vars = do
     won <- newEmptyMVar
     contestants <- forM vars (\var -> forkIO (do
