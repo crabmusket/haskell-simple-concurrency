@@ -71,13 +71,13 @@ print3MessagesFrom name = void (sequence (map printMessage [1..3]))
 > It looks a little messy, if you're not used to functional programming.
 > Let's read the top line after the `=` from the inside out:
 > 
-> `map someFunction someList` says 'call `someFunction` on each element of the list', which you can probably guess in this case is `[1, 2, 3]`.
+>  * `map someFunction someList` says 'call `someFunction` on each element of the list', which you can probably guess in this case is `[1, 2, 3]`.
 > 
-> Next, `sequence someList` simply performs all the `IO` actions in `someList`, in the order they come.
-> In this case, our list of `IO` actions is `[printMessage 1, printMessage 2, printMessage 3]`.
+>  * Next, `sequence someList` simply performs all the `IO` actions in `someList`, in the order they come.
+>    In this case, our list of `IO` actions is `[printMessage 1, printMessage 2, printMessage 3]`.
 > 
-> Finally, `void someAction` simply says 'discard the return value of `someAction`, I don't want it!'.
-> We do this to signal explicitly that we are throwing away the return value, otherwise Haskell's type inference will remind us that we've forgotten about it!
+>  * Finally, `void someAction` simply says 'discard the return value of `someAction`, I don't want it!'.
+>    We do this to signal explicitly that we are throwing away the return value, otherwise Haskell's type inference will remind us that we've forgotten about it!
 > 
 > Other little bits and pieces - `putStrLn` prints a `String` to standard output, and `sleepMs` is a utility function that pauses execution for some amount of milliseconds.
 > That's not so bad, right?
