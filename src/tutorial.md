@@ -30,6 +30,7 @@ I'm writing this to:
  * [Directed channels](#directed-channels)
  * [Select](#select)
  * [Timeouts](#timeouts)
+ * [Composable select](#composable-select)
 
 ## Running the code
 
@@ -476,3 +477,68 @@ So, running our demo program, we see that unfortunately we time out both times:
     Too slow!
 
 [See the whole program](./Ex6Timeouts.hs) and the [GbE chapter on timeouts](https://gobyexample.com/timeouts).
+
+## Composable select
+
+At this point, I'd like to digress from ym source material and return to the question I left hanging of why I named my `select` implementation `selectNow`.
+Basically, because though it's nice for writing examples with, it's not composable.
+For example, I can't select on the result of a `selectNow`, because `selectNow` blocks.
+
+What can we do about this?
+Well, easy - write a composable `select`!
+
+Let's first see an example of how it'll be used.
+
+``` haskell
+main = do
+    -- Fork a couple of humans to do some work.
+    employees <- forM ["Harry", "Sally", "Aang"] (\name -> do
+        item <- newEmptyMVar
+        forkIO (worker name item)
+        return item)
+
+    -- A very efficient robot will also do some work.
+    robot <- newEmptyMVar
+    forkIO (putMVar robot "Bleep bloop, puny humans.")
+
+    -- Let the battle for the future of the Earth begin.
+    fastestHuman <- select employees
+    battle <- select [fastestHuman, robot]
+    result <- takeMVar battle
+    putStrLn result
+```
+
+We're reusing the `worker` function from when we first introduced `selectNow`.
+The critical part of the code is the last paragraph.
+`select employees` takes a list of `MVar`s, and critically, _returns another `MVar`_.
+We can then use this `MVar`, which will represent the first employee to finish their work, in another `select`, where we compare this human to the robot worker.
+
+How do we implement this composable `select`?
+It's very similar to `selectNow`, but we just return the `MVar`, instead of calling `takeMVar` and returning the result:
+
+``` haskell
+select vars = do
+    won <- newEmptyMVar
+    forM vars (\var -> forkIO (do
+        val <- takeMVar var
+        putMVar won val))
+    return won
+```
+
+So, what do we gain from this?
+Well, we can compose several selections together, and then only take the final result.
+This can sometimes increase our opportunities to do work in parallel.
+Of couse, sometimes it just means adding an extra `takeMVar` when you don't want it.
+Notice that we could have written, instead:
+
+``` haskell
+    fastestHuman <- select employees
+    result <- selectNow [fastestHuman, robot]
+```
+
+Let's run this code, as if it isn't a foregone conclusion:
+
+    $ runhaskell Ex7ComposableSelect.hs
+    Bleep bloop, puny humans.
+
+[See the whole program.](./Ex7ComposableSelect.hs)
