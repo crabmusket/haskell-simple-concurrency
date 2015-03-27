@@ -374,7 +374,6 @@ If you open up last tutorial's code in GHCI, you can ask GHC what the type of `s
     selectNow :: [MVar a] -> IO a
 
 This means that every `MVar` we give select must have the same type `a`, and the result of binding `selectNow` is an `a` also.
-
 But what can we do if the selection times out somehow?
 How can we provide a value of type `a` when we don't even know what that type might be?
 
@@ -456,9 +455,6 @@ The `waiter` actually performs a regular `selectNow` to try to get a result from
 The `killer` performs a standard-looking timeout, but with the addition of killing the `waiter` thread after it does so.
 This isn't technically necessary, but it'd be nice to not have useless threads hanging around, right?
 
-Critically, after waiting, the `killer` puts the value `Nothing` into the `result`.
-This, combined with the use of `Just` in the `waiter`, are that makes the return type `Maybe a`, without needing to pass `MVar (Maybe a)`s into the function.
-
 > **TODO**
 > 
 > Unfortunately, killing the `waiter` thread doesn't kill the threads it forked.
@@ -466,8 +462,10 @@ This, combined with the use of `Just` in the `waiter`, are that makes the return
 > The [slave-thread](https://hackage.haskell.org/package/slave-thread) library addresses this, but I didn't want to introduce any additional dependencies into the code.
 > Suggestions welcomed.
 
-Finally, the `takeMVar result` blocks until either the timeout happens, or one of the actual values appears.
+Critically, after waiting, the `killer` puts the value `Nothing` into the `result`.
+This, combined with the use of `Just` in the `waiter`, are that makes the return type `Maybe a`, without needing to pass `MVar (Maybe a)`s into the function.
 
+Finally, the `takeMVar result` blocks until either the timeout happens, or one of the actual values appears.
 So, running our demo program, we see that unfortunately we time out both times:
 
     $ runhaskell Ex6Timeouts.hs
