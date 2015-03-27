@@ -18,6 +18,7 @@ main = do
     name <- select [item1, item2]
     putStrLn (name ++ " finished first!")
 
+
 select vars = do
     won <- newEmptyMVar
     contestants <- forM vars (\var -> forkIO (do
