@@ -17,6 +17,10 @@ This tutorial will probably not end up covering STM (at least not for the forsee
 This is simply because there's no real equivalent in Go by Example, so I'd have to actually think of my own tutorial structure.
 Ain't nobody got the energy for that.
 
+ * [Basic threading](#basic-threading)
+ * [Thread synchronisation with MVars](#thread-synchronisation-with-mvars)
+ * [Channels](#channels)
+
 ## Running the code
 
 If you've cloned this repository to run locally, once you have the Haskell platform installed, you can run any of the example files by entering, for example,
