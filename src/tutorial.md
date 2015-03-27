@@ -7,11 +7,15 @@ I'm writing this to:
 
  1. Learn more about Go's concurrency primitives by translating them.
     Go is frequently praised for its built-in channels and goroutines, so I was naturally interested.
-    But at the same time, I'd like to see how we can build up roughly equivalent features in another language.
+    But at the same time, I'd like to see how we can achieve similar results in Haskell.
  2. Learn more about Haskell's concurrency libraries - and hopefully teach you about them, too.
     I haven't had much cause to use them, so I'm keen to get my hands dirty and solidify my knowledge.
  3. Hopefully reach out to interested non-Haskellers who may not know about some of these features.
     Ah yes, my secret motives are revealed.
+
+Throughout the tutorial, and especially in [the last chapter](#further-reading), I've collected some references for those interested in going further with concurrency and parallelism in Haskell.
+This includes recommendations of libraries that can simplify your concurrency experience, or provide higher-level abstractions for you to work with.
+In the main body of the tutorial, though, I'll be sticking with the lower-level libraries provided in GHC's `base` package, or in the Haskell Platform.
 
 > ##### An aside
 > 
@@ -31,6 +35,8 @@ I'm writing this to:
  * [Select](#select)
  * [Timeouts](#timeouts)
  * [Composable select](#composable-select)
+ * [Coming soon]
+ * [Libraries and further reading](#further-reading)
 
 ## Running the code
 
@@ -52,7 +58,7 @@ Note that you cannot compile the example files directly, but I have provided a `
 As a Haskeller learning Go, I found myself regularly forgetting that `<-` and `->` have different meanings in the two languages.
 In Haskell, `<-` is a generic operator called _bind_ which runs some sort of action and stores the result in a variable (_binds_ it).
 `->` is used in anonymous functions, e.g. `\x -> x + 1`, and in type signatures, like `Int -> Int`.
-In Go, both of these operations refer specifically to channels.
+In Go, both of these operations refer specifically to channels, as far as I'm aware.
 
 ## Basic threading
 
@@ -434,7 +440,7 @@ If I had defined this function already, you'd be able to open GHCI to inspect it
     selectNowOrTimeout :: Int -> [MVar a] -> IO (Maybe a)
 
 Well, that looks right.
-Notice how we inspected `result` by matching against thw two potential cases, where there was `Nothing` returned (i.e. the select timed out), and when there was `Just` some result.
+Notice how we inspected `result` by matching against the two potential cases, where there was `Nothing` returned (i.e. the select timed out), and when there was `Just` some result.
 
 Okay, now it's time to see how I actually define `selectNowOrTimeout`:
 
@@ -480,13 +486,12 @@ So, running our demo program, we see that unfortunately we time out both times:
 
 ## Composable select
 
-At this point, I'd like to digress from ym source material and return to the question I left hanging of why I named my `select` implementation `selectNow`.
-Basically, because though it's nice for writing examples with, it's not composable.
+At this point, I'd like to digress again from GbE's structire and return to the question I left hanging of why I named my `select` implementation `selectNow`.
+Basically, though it's nice for writing examples with, it's not composable.
 For example, I can't select on the result of a `selectNow`, because `selectNow` blocks.
 
 What can we do about this?
 Well, easy - write a composable `select`!
-
 Let's first see an example of how it'll be used.
 
 ``` haskell
@@ -550,3 +555,20 @@ Let's run the code, as if it isn't a foregone conclusion:
     Bleep bloop, puny humans.
 
 [See the whole program.](./Ex7ComposableSelect.hs)
+
+## Further reading
+
+This tutorial has covered some of the basic concurrency primitives available in Haskell/GHC, but I've stayed away from mentioning any of the other resources out there, or libraries you could use to simplify your code and amplify its power.
+So, I'll do that now.
+
+For a far more in-depth look at a variety of techniques and libraries for doing concurrency and parallelism in Haskell, [Parellel and Concurrent Programming in Haskell](http://community.haskell.org/~simonmar/pcph/) is the authority, and is available for free online!
+The book is written by the author of both the [async](https://hackage.haskell.org/package/async) package and GHC's parallel runtime itself.
+
+If you're keen to use channels in your application, then you might want to take a look at the [unagi-chan](https://hackage.haskell.org/package/unagi-chan) library, which provides super-performant channels, and even has directed channels built-in.
+
+And if you want a higher level of composable concurrency, then [STM](https://wiki.haskell.org/Software_transactional_memory) is for you.
+It stands for software transactional memory, and it's all the rage these days.
+This wouldn't be a Haskell tutorial if I didn't link you to a research paper, so [here's](http://research.microsoft.com/pubs/67418/2005-ppopp-composable.pdf) the classic paper introducing Haskell's implementation of STM.
+Trust me, it's a pretty easy read!
+
+The [pipes-concurrency](https://hackage.haskell.org/package/pipes-concurrency) library allows you to build up dynamic networks of concurrent activities.
