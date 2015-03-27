@@ -172,3 +172,53 @@ That is, if you write to a Go channel and nobody is listening, you will block.
 If you put to an `MVar` which is empty, then you will not block, and another thread can read that value at its leisure.
 
 [See the whole program](./Ex2MVars.hs) and the [GbE chapter on channels](https://gobyexample.com/channels).
+
+## Channels
+
+Now that we've talked about `MVar`s, let's get up to speed with channels in Haskell.
+A channel, as I'm sure you're aware, is a way to pass several messages between threads.
+Values are written into the channel, and can be read out of it in a first-in-first-out fashion.
+
+Haskell's channel implementation, `Chan`, lives in:
+
+``` haskell
+import Control.Concurrent.Chan (newChan, writeChan, readChan)
+```
+
+And using it looks like this:
+
+``` haskell
+main = do
+    messages <- newChan
+    writeChan messages "unbounded"
+    writeChan messages "channels"
+```
+
+To read from the channel, we use `readChan`:
+
+``` haskell
+    msg <- readChan messages
+    putStrLn msg
+```
+
+Or, more concisely:
+
+``` haskell
+    putStrLn =<< readChan messages
+```
+
+> **`=<<`?**
+> 
+> Some of you following along at home might have expected to be able to write something like
+> 
+> `putStrLn (readChan messages)`
+> 
+> If you did, you'd have seen a type error along the lines of `couldn't match type 'IO [Char]' with '[Char]'`.
+> What it's saying is that `putStrLn` expects a string (a list of `Char`), but you've given it an `IO` action that returns a string.
+> The first solution is to _bind_ that `IO` action to get the string out of it, which is what the `<-` operator does in Haskell.
+> The second way around it is to use another way of binding using the `=<<` operator.
+> 
+> If you squint, it looks a bit like regular function application.
+> I won't go into too much depth here.
+
+[See the whole program](./Ex3Channels.hs) and the [GbE chapter on buffered channels](https://gobyexample.com/channel-buffering).
