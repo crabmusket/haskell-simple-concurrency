@@ -45,10 +45,8 @@ Note that you cannot compile the example files directly, but I have provided a `
 ## A brief word on syntax
 
 As a Haskeller learning Go, I found myself regularly forgetting that `<-` and `->` have different meanings in the two languages.
-
 In Haskell, `<-` is a generic operator called _bind_ which runs some sort of action and stores the result in a variable (_binds_ it).
 `->` is used in anonymous functions, e.g. `\x -> x + 1`.
-
 In Go, both of these operations refer specifically to channels.
 
 ## Basic threading
@@ -72,7 +70,7 @@ import Control.Monad (sequence, void)
 > 
 > Don't panic!
 > `Control.Monad` is just a library implementing some useful combinators we'll use in a second.
-> I promise, this will be the last time you hear my say "monad".
+> I promise, this will be the last time you hear me say "monad".
 
 With those imports out of the way, let's write a simple `IO` action that prints some stuff:
 
@@ -347,7 +345,7 @@ Meanwhile, the main thread waits for `won` to be filled, then returns the winner
 > I tried to slip that one past without you noticing.
 > You can basically read it as the `forEach` that's in most other languages.
 
-But the key thing to know about it is that it is _blocking_ - it will onyl return once it has a value from one of its `MVar`s, which is why I appended the `Now` to it.
+But the key thing to know about it is that it is _blocking_ - it will only return once it has a value from one of its `MVar`s, which is why I appended the `Now` to it.
 This is the same behaviour as Go's `select` construct, but the reason I chose to leave the name `select` free will become apparent in a [later tutorial](#composable-select).
 
 So now we have the result we wanted!
