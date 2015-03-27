@@ -20,6 +20,7 @@ Ain't nobody got the energy for that.
  * [Basic threading](#basic-threading)
  * [Thread synchronisation with MVars](#thread-synchronisation-with-mvars)
  * [Channels](#channels)
+ * [Directed channels](#directed-channels)
 
 ## Running the code
 
@@ -226,3 +227,51 @@ Or, more concisely:
 > I won't go into too much depth here.
 
 [See the whole program](./Ex3Channels.hs) and the [GbE chapter on buffered channels](https://gobyexample.com/channel-buffering).
+
+## Directed channels
+
+At this point, Go by Example has a chapter on channel directions, which is a feature of Go allowing you to restrict a channel to be read-only or write-only to a function you call.
+That is, you can pass in a regular channel to a function which is only allowed to, for example, read from that channel.
+
+Initially I thought about just not translating this example, since Haskell does not have the same ability to restrict its channels.
+Then I realised that I was being dumb, and of course Haskell does.
+Using types to rule out errors is what Haskell is _all about_.
+
+So without further ado, let's replicate some language features!
+This is going to require writing our own little library, which is exciting, but first, I'll show you how it's used:
+
+``` haskell
+import DirectedChannels (WriteOnlyChan, writeOnly, writeWOChan,
+                         ReadOnlyChan,  readOnly,  readROChan)
+
+main = do
+    messages <- newChan
+    forkIO (producer (writeOnly messages))
+    forkIO (consumer (readOnly  messages))
+    sleepMs 5
+```
+
+Note how we use `writeOnly` and `readOnly`, which are functions we'll put into our `DirectedChannels` module, to restrict the behaviour of the `producer` and `consumer` threads.
+
+Now let's see what those two functions do:
+
+``` haskell
+producer chan = do
+    writeWOChan chan "Hello,"
+    writeWOChan chan "Dave."
+
+consumer chan = do
+    putStrLn =<< readROChan chan
+    putStrLn =<< readROChan chan
+```
+
+The code is fairly dumb, but the point is the use of `writeWOChan` and `readROChan`.
+If I were to try to use `readROChan` in `producer`, or even `writeChan` or `readChan` as we used in the [last tutorial](#channels), it'd be a type error.
+How did we make this happen?
+
+Essentially, we just make a wrapper type around `Chan` and only define certain operations on it.
+We also take care not to export the constructor of this wrapper type, so that you can't pattern-match a normal `Chan` out of a `ReadOnlyChan` or `WriteOnlyChan`.
+
+The details are in [DirectedChannels.hs](./DirectedChannels.hs) should you care to read about them.
+
+Otherwise, [see the whole program](./Ex4DirectedChannels.hs) and the [GbE chapter on directed channels](https://gobyexample.com/channel-directions).
