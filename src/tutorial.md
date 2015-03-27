@@ -285,6 +285,12 @@ How did we make this happen?
 Essentially, we make a wrapper type around `Chan` and only define certain operations on it.
 We also take care not to export the constructor of this wrapper type, so that you can't pattern-match a normal `Chan` out of a `ReadOnlyChan` or `WriteOnlyChan`.
 
-The details are in [DirectedChannels.hs](./DirectedChannels.hs) should you care to read about them.
+The details of out are in [DirectedChannels.hs](./DirectedChannels.hs) should you care to read about them.
 
-Otherwise, [see the whole program](./Ex4DirectedChannels.hs) and the [GbE chapter on directed channels](https://gobyexample.com/channel-directions).
+The output of this program is probably pretty obvious:
+
+    $ runhaskell Ex4DirectedChannels.hs
+    Hello,
+    Dave.
+
+[See the whole program](./Ex4DirectedChannels.hs) and the [GbE chapter on directed channels](https://gobyexample.com/channel-directions).
