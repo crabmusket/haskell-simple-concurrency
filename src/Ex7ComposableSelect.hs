@@ -5,11 +5,12 @@ import Ex5Select (worker)
 
 import Control.Concurrent (forkIO)
 import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)
-import Control.Monad (forM)
+import Data.Foldable (for_)
+import Data.Traversable (for)
 
 main = do
     -- Fork a couple of humans to do some work.
-    employees <- forM ["Harry", "Sally", "Aang"] (\name -> do
+    employees <- for ["Harry", "Sally", "Aang"] (\name -> do
         item <- newEmptyMVar
         forkIO (worker name item)
         return item)
@@ -26,7 +27,7 @@ main = do
 
 select vars = do
     won <- newEmptyMVar
-    forM vars (\var -> forkIO (do
+    for_ vars (\var -> forkIO (do
         val <- takeMVar var
         putMVar won val))
     -- Return the MVar, rather than awaiting its result.

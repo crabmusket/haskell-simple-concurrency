@@ -4,7 +4,7 @@ import Ex1Threads (sleepMs)
 
 import Control.Concurrent (forkIO, killThread)
 import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)
-import Control.Monad (forM)
+import Data.Foldable (for_)
 import System.Random (randomRIO)
 
 main = do
@@ -21,7 +21,7 @@ main = do
 -- Wait on each MVar in 'vars', and return the first value which is put into any of them.
 selectNow vars = do
     won <- newEmptyMVar
-    forM vars (\var -> forkIO (do
+    for_ vars (\var -> forkIO (do
         val <- takeMVar var
         putMVar won val))
     winner <- takeMVar won

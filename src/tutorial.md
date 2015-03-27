@@ -323,7 +323,7 @@ The interesting function, `selectNow`, is defined as follows.
 ``` haskell
 selectNow vars = do
     won <- newEmptyMVar
-    forM vars (\var -> forkIO (do
+    for_ vars (\var -> forkIO (do
         val <- takeMVar var
         putMVar won val))
     winner <- takeMVar won
@@ -337,11 +337,6 @@ Meanwhile, the main thread waits for `won` to be filled, then returns the winner
 > ##### You just created _how many_ threads?
 > 
 > Don't panic, threads are lightweight.
-
-> ##### And what's this `forM`?
-> 
-> I tried to slip that one past without you noticing.
-> You can basically read it as the `forEach` that's in most other languages.
 
 But the key thing to know about it is that it is _blocking_ - it will only return once it has a value from one of its `MVar`s, which is why I appended the `Now` to it.
 This is the same behaviour as Go's `select` construct, but the reason I chose to leave the name `select` free will become apparent in a [later tutorial](#composable-select).
@@ -484,7 +479,7 @@ Let's first see an example of how it'll be used.
 ``` haskell
 main = do
     -- Fork a couple of humans to do some work.
-    employees <- forM ["Harry", "Sally", "Aang"] (\name -> do
+    employees <- for ["Harry", "Sally", "Aang"] (\name -> do
         item <- newEmptyMVar
         forkIO (worker name item)
         return item)
@@ -511,7 +506,7 @@ It's very similar to `selectNow`, but we just return the `MVar`, instead of call
 ``` haskell
 select vars = do
     won <- newEmptyMVar
-    forM vars (\var -> forkIO (do
+    for_ vars (\var -> forkIO (do
         val <- takeMVar var
         putMVar won val))
     return won
