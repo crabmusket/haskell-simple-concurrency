@@ -2,7 +2,6 @@ module Ex7ComposableSelect where
 
 import Ex1Threads (sleepMs)
 import Ex5Select (worker)
-import Ex6Timeouts (timeout)
 
 import Control.Concurrent (forkIO)
 import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)

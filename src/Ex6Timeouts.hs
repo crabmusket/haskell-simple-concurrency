@@ -9,12 +9,12 @@ import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)
 main = do
     never <- newEmptyMVar
 
-    putStrLn "Using a default value:"
+    -- Return a default value when time's up.
     timer <- timeout 5 "Too slow!"
     result <- selectNow [never, timer]
     putStrLn result
 
-    putStrLn "Using the selectNowOrTimeout wrapper:"
+    -- Return Nothing when time's up, using our selectNowOrTimeout wrapper.
     result <- selectNowOrTimeout 5 [never]
     case result of
         Nothing -> putStrLn "Too slow!"
