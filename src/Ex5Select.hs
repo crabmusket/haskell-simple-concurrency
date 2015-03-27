@@ -30,7 +30,8 @@ select vars = do
 -- These workers simply return their name when they're done doing work.
 -- Guess they're more concerned with apparances than results!
 worker name result = do
-    -- Not all work is predictable!
+    -- Not all work is predictable...
     delay <- randomRIO (50, 100)
+    -- ...or useful.
     sleepMs delay
     putMVar result name
