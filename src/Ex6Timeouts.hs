@@ -1,7 +1,7 @@
 module Ex6Timeouts where
 
 import Ex1Threads (sleepMs)
-import Ex5Select (select)
+import Ex5Select (selectNow)
 
 import Control.Concurrent (forkIO, killThread)
 import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)
@@ -11,11 +11,11 @@ main = do
 
     putStrLn "Using a default value:"
     timer <- timeout 5 "Too slow!"
-    result <- select [never, timer]
+    result <- selectNow [never, timer]
     putStrLn result
 
-    putStrLn "Using the selectOrTimeout combinator:"
-    result <- selectOrTimeout 5 [never]
+    putStrLn "Using the selectOrTimeout wrapper:"
+    result <- selectNowOrTimeout 5 [never]
     case result of
         Nothing -> putStrLn "Too slow!"
         Just r  -> putStrLn r
@@ -28,13 +28,13 @@ timeout delay value = do
         putMVar var value)
     return var
 
--- This combinator provides no value ('Nothing') if the 'select' takes too long.
+-- This wrapper provides no value ('Nothing') if the 'select' takes too long.
 -- This is useful if we don't want to, or can't, provide a sensible default value.
-selectOrTimeout delay vars = do
+selectNowOrTimeout delay vars = do
     result <- newEmptyMVar
     -- This thread patiently waits for the actual select that we want to perform.
     waiter <- forkIO (do
-        value <- select vars
+        value <- selectNow vars
         putMVar result (Just value))
     -- This thread acts as a watchdog, and kills the other thread if it takes too long.
     killer <- forkIO (do

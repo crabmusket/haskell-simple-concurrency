@@ -15,17 +15,16 @@ main = do
     forkIO (worker "Harry" item1)
     forkIO (worker "Sally" item2)
 
-    name <- select [item1, item2]
+    name <- selectNow [item1, item2]
     putStrLn (name ++ " finished first!")
 
 -- Wait on each MVar in 'vars', and return the first value which is put into any of them.
-select vars = do
+selectNow vars = do
     won <- newEmptyMVar
-    contestants <- forM vars (\var -> forkIO (do
+    forM vars (\var -> forkIO (do
         val <- takeMVar var
         putMVar won val))
     winner <- takeMVar won
-    forM contestants killThread
     return winner
 
 -- These workers simply return their name when they're done doing work.
