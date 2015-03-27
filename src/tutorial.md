@@ -175,7 +175,7 @@ However, there is a significant difference to Go here, in that an `MVar` is effe
 That is, if you write to a Go channel and nobody is listening, you will block.
 If you put to an `MVar` which is empty, then you will not block, and another thread can read that value at its leisure.
 
-[See the whole program](./Ex2MVars.hs) and the [GbE chapter on channels](https://gobyexample.com/channels).
+[See the whole program](./Ex2MVars.hs) and the [GbE chapters on channels](https://gobyexample.com/channels) and [channel synchronisation](https://gobyexample.com/channel-synchronization).
 
 ## Channels
 
