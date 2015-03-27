@@ -46,7 +46,7 @@ Note that you cannot compile the example files directly, but I have provided a `
 
 As a Haskeller learning Go, I found myself regularly forgetting that `<-` and `->` have different meanings in the two languages.
 In Haskell, `<-` is a generic operator called _bind_ which runs some sort of action and stores the result in a variable (_binds_ it).
-`->` is used in anonymous functions, e.g. `\x -> x + 1`.
+`->` is used in anonymous functions, e.g. `\x -> x + 1`, and in type signatures, like `Int -> Int`.
 In Go, both of these operations refer specifically to channels.
 
 ## Basic threading
