@@ -125,4 +125,45 @@ And we can run our program!
     ending!
     fork number 3
 
-[See the whole program.](./Ex1Threads.hs)
+[See the whole program](./Ex1Threads.hs), and the [GbE chapter on goroutines](https://gobyexample.com/goroutines).
+
+## Thread synchronisation with MVars
+
+At this point in Go by Example, the reader [is introduced](https://gobyexample.com/channels) to the concept of channels, which are used to pass a message between threads.
+Here I must diverge slightly from my source material, and instead of introducing channels, introduce the humble `MVar`, which is used for that purpose in Haskell.
+
+An `MVar` is a box which may hold a single element, or may be empty.
+It is safe to access from multiple threads with its operations `takeMVar`, which takes a value out of the box if one is there, and `putMVar`, which puts a value into the box if there is none.
+
+`MVar` lives in a library, much like `forkIO`:
+
+``` haskell
+import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)
+```
+
+Without further ado, let's see it in action!
+
+``` haskell
+main = do
+    message <- newEmptyMVar
+
+    forkIO (do
+        sleepMs 5
+        putStrLn "Sending message!"
+        putMVar message "Do the thing!")
+
+    putStrLn "Waiting..."
+    result <- takeMVar message
+    putStrLn ("Received message: " ++ result)
+```
+
+Running this, you should see the following output:
+
+    $ runhaskell Ex2MVars.hs
+    Waiting...
+    Sending a message!
+    Received message: Do the thing!
+
+I should note here that `takeMVar` and `putMVar` both block if the `MVar` is absent or present respectively, much in the same way that pulling from a Go channel blocks until a value is put into it.
+
+[See the whole program](./Ex2MVars.hs) and the [GbE chapter on channels](https://gobyexample.com/channels).
