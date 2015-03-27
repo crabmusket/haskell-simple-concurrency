@@ -13,7 +13,7 @@ I'm writing this to:
  3. Hopefully reach out to interested non-Haskellers who may not know about some of these features.
     Ah yes, my secret motives are revealed.
 
-> **An aside**
+> ##### An aside
 > 
 > Note that many of these tutorials end up translating the Go programs from GbE more than the actual semantics of Go itself.
 > With Haskell being lazy and pure, there are bound to be some indirect translations, but I've tried to follow the spirit of the examples as much as possible, rather than the fine details of semantics.
@@ -85,7 +85,7 @@ print3MessagesFrom name = void (sequence (map printMessage [1..3]))
             sleepMs 1
 ```
 
-> **Wait wait, too fast**
+> ##### Wait wait, too fast
 > 
 > Sorry, let me explain that a bit better.
 > `print3MessagesFrom` is a function that takes a single argument, `name`, and prints out `"<name> number <x>"` three times, where `x` counts from 1 to 3.
@@ -228,7 +228,7 @@ Or, more concisely:
     putStrLn =<< readChan messages
 ```
 
-> **=<<?**
+> ##### =<<?
 > 
 > Some of you following along at home might have expected to be able to write something like
 > 
@@ -340,11 +340,11 @@ This function takes a list, `vars`, of `MVar`s.
 The meat of the function involves forking a bunch of threads (one for each `MVar`, in fact!), each of which asynchronously tries to take the value it was assigned, and then put that value into the `won` `MVar`.
 Meanwhile, the main thread waits for `won` to be filled, then returns the winner.
 
-> **You just created _how many_ threads?**
+> ##### You just created _how many_ threads?
 > 
 > Don't panic, threads are lightweight.
 
-> **And what's this `forM`?**
+> ##### And what's this `forM`?
 > 
 > I tried to slip that one past without you noticing.
 > You can basically read it as the `forEach` that's in most other languages.
@@ -411,7 +411,7 @@ Sometimes we want to be notified of a failure, or simply can't construct a sensi
 Well, for these cases, we're going to need a function of a different type.
 Because we won't always necessarily return an `a`, we can't say our function returns type `a`: it must return a `Maybe a`.
 
-> **You're making this up**
+> ##### You're making this up
 > 
 > `Maybe` is a Haskell type that encodes nullability.
 > A type `a` can never be `nil` or `null` or `None`, but a type `Maybe a` can be `Nothing`, or `Just a` if there actually is a value.
@@ -458,7 +458,7 @@ The `waiter` actually performs a regular `selectNow` to try to get a result from
 The `killer` performs a standard-looking timeout, but with the addition of killing the `waiter` thread after it does so.
 This isn't technically necessary, but it'd be nice to not have useless threads hanging around, right?
 
-> **TODO**
+> ##### Well, actually...
 > 
 > Unfortunately, killing the `waiter` thread doesn't kill the threads it forked.
 > Crazy, right?
