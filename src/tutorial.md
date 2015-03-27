@@ -166,4 +166,9 @@ Running this, you should see the following output:
 
 I should note here that `takeMVar` and `putMVar` both block if the `MVar` is absent or present respectively, much in the same way that pulling from a Go channel blocks until a value is put into it.
 
+However, there is a significant difference to Go here, in that an `MVar` is effectively a single-element buffer, whereas Go channels are completely unbuffered by default.
+
+That is, if you write to a Go channel and nobody is listening, you will block.
+If you put to an `MVar` which is empty, then you will not block, and another thread can read that value at its leisure.
+
 [See the whole program](./Ex2MVars.hs) and the [GbE chapter on channels](https://gobyexample.com/channels).
