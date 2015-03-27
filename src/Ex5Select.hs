@@ -20,11 +20,11 @@ main = do
 
 select vars = do
     won <- newEmptyMVar
-    threads <- forM vars (\var -> forkIO (do
+    contestants <- forM vars (\var -> forkIO (do
         val <- takeMVar var
         putMVar won val))
     winner <- takeMVar won
-    forM threads killThread
+    forM contestants killThread
     return winner
 
 -- These workers simply return their name when they're done doing work.
