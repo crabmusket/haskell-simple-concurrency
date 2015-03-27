@@ -26,6 +26,7 @@ I'm writing this to:
  * [Channels](#channels)
  * [Directed channels](#directed-channels)
  * [Select](#select)
+ * [Timeouts](#timeouts)
 
 ## Running the code
 
@@ -359,3 +360,118 @@ Let's run the full code:
 Run it a few times to make sure the random number generator is working.
 
 [See the whole program](./Ex5Select.hs) and the [GbE chapter on select](https://gobyexample.com/select).
+
+## Timeouts
+
+When we wrote the `selectNow` function above, I neglected to mention a key difference between it and Go.
+Go's `select` structure controls flow of execution, rather like a `switch` statement in other C-like languages.
+That means that each branch of the `select` can have a different type of result.
+One area this is important is when you want your operation to time out.
+
+If you open up last tutorial's code in GHCI, you can ask GHC what the type of `selectNow` is:
+
+    ghci> :type selectNow
+    selectNow :: [MVar a] -> IO a
+
+This means that every `MVar` we give select must have the same type `a`, and the result of binding `selectNow` is an `a` also.
+
+But what can we do if the selection times out somehow?
+How can we provide a value of type `a` when we don't even know what that type might be?
+
+There are two approaches I will illustrate now, and at least one more that I won't (using the `Default` or `Monoid` typeclasses).
+First, let's do it the easy way - after a certain time, we'll just provide a default value!
+This is as easy as adding one more `MVar` to the selection, which is set to be filled at a certain time.
+We can write a utility function to provide just such an `MVar`:
+
+``` haskell
+timeout delay value = do
+    var <- newEmptyMVar
+    forkIO (do
+        sleepMs delay
+        putMVar var value)
+    return var
+```
+
+So, after sleeping up to `delay`, we `putMVar` and that will cause our `selectNow` to, well, select it.
+Here's an example of using that:
+
+``` haskell
+main = do
+    never <- newEmptyMVar
+    timer <- timeout 5 "Too slow!"
+    result <- selectNow [never, timer]
+    putStrLn result
+```
+
+Looks easy, right?
+But what if we don't want to provide some default value?
+Sometimes we want to be notified of a failure, or simply can't construct a sensible default value.
+Well, for these cases, we're going to need a function of a different type.
+Because we won't always necessarily return an `a`, we can't say our function returns type `a`: it must return a `Maybe a`.
+
+> **You're making this up**
+> 
+> `Maybe` is a Haskell type that encodes nullability.
+> A type `a` can never be `nil` or `null` or `None`, but a type `Maybe a` can be `Nothing`, or `Just a` if there actually is a value.
+> It's a perfect fit for our new selection function which will _maybe_ time out.
+
+First, let's see how we would use this new wrapper function:
+
+``` haskell
+    result <- selectNowOrTimeout 5 [never]
+    case result of
+        Nothing -> putStrLn "Too slow!"
+        Just r  -> putStrLn r
+```
+
+So instead of calling `selectNow`, we call `selectNowOrTimeout`.
+If I had defined this function already, you'd be able to open GHCI to inspect its type:
+
+    ghci> :type selectNowOrTimeout
+    selectNowOrTimeout :: Int -> [MVar a] -> IO (Maybe a)
+
+Well, that looks right.
+Notice how we inspected `result` by matching against thw two potential cases, where there was `Nothing` returned (i.e. the select timed out), and when there was `Just` some result.
+
+Okay, now it's time to see how I actually define `selectNowOrTimeout`:
+
+``` haskell
+selectNowOrTimeout delay vars = do
+    result <- newEmptyMVar
+    -- This thread patiently waits for the actual select that we want to perform.
+    waiter <- forkIO (do
+        value <- selectNow vars
+        putMVar result (Just value))
+    -- This thread acts as a watchdog, and kills the other thread if it takes too long.
+    killer <- forkIO (do
+        sleepMs delay
+        killThread waiter
+        putMVar result Nothing)
+    takeMVar result
+```
+
+This is a little long, but take it step by step.
+The main logic is two threads, the `waiter` and the `killer`.
+The `waiter` actually performs a regular `selectNow` to try to get a result from the `vars` we wanted to wait for.
+The `killer` performs a standard-looking timeout, but with the addition of killing the `waiter` thread after it does so.
+This isn't technically necessary, but it'd be nice to not have useless threads hanging around, right?
+
+Critically, after waiting, the `killer` puts the value `Nothing` into the `result`.
+This, combined with the use of `Just` in the `waiter`, are that makes the return type `Maybe a`, without needing to pass `MVar (Maybe a)`s into the function.
+
+> **TODO**
+> 
+> Unfortunately, killing the `waiter` thread doesn't kill the threads it forked.
+> Crazy, right?
+> The [slave-thread](https://hackage.haskell.org/package/slave-thread) library addresses this, but I didn't want to introduce any additional dependencies into the code.
+> Suggestions welcomed.
+
+Finally, the `takeMVar result` blocks until either the timeout happens, or one of the actual values appears.
+
+So, running our demo program, we see that unfortunately we time out both times:
+
+    $ runhaskell Ex6Timeouts.hs
+    Too slow!
+    Too slow!
+
+[See the whole program](./Ex6Timeouts.hs) and the [GbE chapter on timeouts](https://gobyexample.com/timeouts).
