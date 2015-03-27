@@ -7,7 +7,7 @@ I'm writing this to:
 
  1. Learn more about Go's concurrency primitives by translating them.
     Go is frequently praised for its built-in channels and goroutines, so I was naturally interested.
-    But at the same time, I'd like to see how we can build up equivalent features in another language.
+    But at the same time, I'd like to see how we can build up roughly equivalent features in another language.
  2. Learn more about Haskell's concurrency libraries - and hopefully teach you about them, too.
     I haven't had much cause to use them, so I'm keen to get my hands dirty and solidify my knowledge.
  3. Hopefully reach out to interested non-Haskellers who may not know about some of these features.
@@ -15,7 +15,10 @@ I'm writing this to:
 
 > **An aside**
 > 
-> This tutorial will probably not end up covering STM (at least not for the forseeable future), even though it definitely counts as simple concurrency.
+> Note that many of these tutorials end up translating the Go programs from GbE more than the actual semantics of Go itself.
+> With Haskell being lazy and pure, there are bound to be some indirect translations, but I've tried to follow the spirit of the examples as much as possible, rather than the fine details of semantics.
+> 
+> Also, this tutorial will probably not end up covering STM (at least not for the forseeable future), even though it definitely counts as simple concurrency.
 > This is simply because there's no real equivalent in Go by Example, so I'd have to actually think of my own tutorial structure.
 > Ain't nobody got the energy for that.
 
