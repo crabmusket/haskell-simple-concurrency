@@ -295,7 +295,7 @@ The output of this program is probably pretty obvious:
 ## Select
 
 Go has a built-in `select` statement that will wait on one of several channels, and perform some code depending on which one produced a result first (much like the POSIX `select` function).
-Haskell has no built-in feature for this, like it doesn't have directed channels - but again, we can write it ourselves if we're willing to put a little bit of time in.
+Haskell has no built-in feature for this, like it doesn't have directed channels - but again, we can write it ourselves if we're willing to put a tiny bit of effort in.
 
 Let's start with how I intend the function to work.
 Since `select` is intended to receive a single result, we'll build it on top of `MVar`s rather than channels.
@@ -369,7 +369,7 @@ This means that every `MVar` we give select must have the same type `a`, and the
 But what can we do if the selection times out somehow?
 How can we provide a value of type `a` when we don't even know what that type might be?
 
-There are two approaches I will illustrate now, and at least one more that I won't (using the `Default` or `Monoid` typeclasses).
+There are two approaches I will illustrate now, and at least one more that I won't (using a typeclass like `Default` or `Monoid`).
 First, let's do it the easy way - after a certain time, we'll just provide a default value!
 This is as easy as adding one more `MVar` to the selection, which is set to be filled at a certain time.
 We can write a utility function to provide just such an `MVar`:
@@ -400,8 +400,6 @@ Sometimes we want to be notified of a failure, or simply can't construct a sensi
 Well, for these cases, we're going to need a function of a different type.
 Because we won't always necessarily return an `a`, we can't say our function returns type `a`: it must return a `Maybe a`.
 
-> ##### You're making this up
-> 
 > `Maybe` is a Haskell type that encodes nullability.
 > A type `a` can never be `nil` or `null` or `None`, but a type `Maybe a` can be `Nothing`, or `Just a` if there actually is a value.
 > It's a perfect fit for our new selection function which will _maybe_ time out.
