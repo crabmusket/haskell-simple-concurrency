@@ -322,23 +322,25 @@ The interesting function, `selectNow`, is defined as follows.
 
 ``` haskell
 selectNow vars = do
-    won <- newEmptyMVar
+    winner <- newEmptyMVar
     for_ vars (\var -> forkIO (do
         val <- takeMVar var
-        putMVar won val))
-    winner <- takeMVar won
-    return winner
+        tryPutMVar winner val))
+    takeMVar winner
 ```
 
 This function takes a list, `vars`, of `MVar`s.
-The meat of the function involves forking a bunch of threads (one for each `MVar`, in fact!), each of which asynchronously tries to take the value it was assigned, and then put that value into the `won` `MVar`.
-Meanwhile, the main thread waits for `won` to be filled, then returns the winner.
+The meat of the function involves forking a bunch of threads (one for each `MVar`, in fact!), each of which asynchronously tries to take the value it was assigned, and then put that value into the `winner` `MVar`.
+Meanwhile, the main thread waits for `winner` to be filled, then returns the value.
 
 > ##### You just created _how many_ threads?
 > 
 > Don't panic, threads are lightweight.
 
-But the key thing to know about it is that it is _blocking_ - it will only return once it has a value from one of its `MVar`s, which is why I appended the `Now` to it.
+It's important to notice that instead of using `putMVar`, the contestant threads use `tryPutMVar`, which is a non-blocking alternative.
+This way, once one thread has 'won', the other threads will harmlessly end, rather than continuing to try to put a value into an `MVar` which we only ever take one value out of.
+
+`selectNow` blocks - it will only return once it has a value from one of its `MVar`s, which is why I appended the `Now` to it.
 This is the same behaviour as Go's `select` construct, but the reason I chose to leave the name `select` free will become apparent in a [later tutorial](#composable-select).
 
 So now we have the result we wanted!

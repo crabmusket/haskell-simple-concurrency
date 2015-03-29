@@ -3,7 +3,7 @@ module Ex5Select where
 import Ex1Threads (sleepMs)
 
 import Control.Concurrent (forkIO, killThread)
-import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)
+import Control.Concurrent.MVar (newEmptyMVar, takeMVar, tryPutMVar)
 import Data.Foldable (for_)
 import System.Random (randomRIO)
 
@@ -20,12 +20,11 @@ main = do
 
 -- Wait on each MVar in 'vars', and return the first value which is put into any of them.
 selectNow vars = do
-    won <- newEmptyMVar
+    winner <- newEmptyMVar
     for_ vars (\var -> forkIO (do
         val <- takeMVar var
-        putMVar won val))
-    winner <- takeMVar won
-    return winner
+        tryPutMVar winner val))
+    takeMVar winner
 
 -- These workers simply return their name when they're done doing work.
 -- Guess they're more concerned with apparances than results!
