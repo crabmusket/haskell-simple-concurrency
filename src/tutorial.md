@@ -2,6 +2,9 @@
 
 See the [readme](../readme.md) for details on reading and running this tutorial.
 
+ * [Chapter 1. Base only](#1-base-only)
+ * [Chapter 2. Haskell Platform only](#1-haskell-platform-only)
+
 # 1. Base only
 
 The chapters in this section will introduce you to what might be described as GHC's concurrency primitives, on the same level as Go's built-in language features.
