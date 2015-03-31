@@ -3,7 +3,8 @@
 See the [readme](../readme.md) for details on reading and running this tutorial.
 
  * [Chapter 1. Base only](#1-base-only)
- * [Chapter 2. Haskell Platform only](#1-haskell-platform-only)
+ * Chapter 2. Haskell Platform only
+ * Chapter 3. Libraries
 
 # 1. Base only
 
@@ -500,8 +501,3 @@ Let's run the code, as if it isn't a foregone conclusion:
 In this section, we'll expand our horizons and start using some libraries that come with the [Haskell Platform](https://www.haskell.org/platform/).
 Note that if you installed GHC without the platform, you may need to `cabal install` some libraries.
 I'll mention when you should do this as we go.
-
-## Contents
-
- * Async
- * STM
