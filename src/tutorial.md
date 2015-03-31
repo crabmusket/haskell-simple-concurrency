@@ -8,7 +8,7 @@ See the [readme](../readme.md) for details on reading and running this tutorial.
 
 # 1. Base only
 
-The chapters in this section will introduce you to what might be described as GHC's concurrency primitives, on the same level as Go's built-in language features.
+The sections in this chapter will introduce you to what might be described as GHC's concurrency primitives, on the same level as Go's built-in language features.
 This section explores what you can get if you just install GHC, for example from the Ubuntu package repositories.
 
 ## Contents
