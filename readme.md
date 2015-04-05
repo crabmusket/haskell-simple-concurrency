@@ -19,9 +19,9 @@ I wrote this to:
 > Note that many of these tutorials end up translating the Go programs from GbE more than the actual semantics of Go itself.
 > With Haskell being lazy and pure, there are bound to be some indirect translations, but I've tried to follow the spirit of the examples as much as possible, rather than the fine details of semantics.
 > 
-> Also, this tutorial will probably not end up covering STM (at least not for the forseeable future), even though it definitely counts as simple concurrency.
-> This is simply because there's no real equivalent in Go by Example, so I'd have to actually think of my own tutorial structure.
-> Ain't nobody got the energy for that.
+> This tutorial is evolving to be less of a translation of Go by Example, and more of a standalone resource.
+> This is good, but will take some time, and until then, there's a mix of sections that refer to GbE, sections that build upon that material, and unfinished work.
+> So, bear with me!
 
 ## Running the code
 
