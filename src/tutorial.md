@@ -96,7 +96,7 @@ And we can run our program!
     ending!
     fork number 3
 
-[See the whole program](./Ex1Threads.hs), and the [GbE chapter on goroutines](https://gobyexample.com/goroutines).
+[See the whole program.](./Ex1Threads.hs)
 
 ## Thread synchronisation with MVars
 
@@ -142,7 +142,7 @@ However, there is a significant difference to Go here, in that an `MVar` is effe
 That is, if you write to a Go channel and nobody is listening, you will block.
 If you put to an `MVar` which is empty, then you will not block, and another thread can read that value at its leisure.
 
-[See the whole program](./Ex2MVars.hs) and the [GbE chapters on channels](https://gobyexample.com/channels) and [channel synchronisation](https://gobyexample.com/channel-synchronization).
+[See the whole program.](./Ex2MVars.hs)
 
 ## Channels
 
@@ -194,7 +194,7 @@ Or, more concisely:
 > 
 > If you need a gentler and more in-depth introduction to `IO` actions, have a read of [this excellent article](http://blog.jle.im/entry/first-class-statements).
 
-[See the whole program](./Ex3Channels.hs) and the [GbE chapter on buffered channels](https://gobyexample.com/channel-buffering).
+[See the whole program.](./Ex3Channels.hs)
 
 ## Directed channels
 
@@ -248,7 +248,7 @@ The output of this program is probably pretty obvious:
     Hello,
     Dave.
 
-[See the whole program](./Ex4DirectedChannels.hs) and the [GbE chapter on directed channels](https://gobyexample.com/channel-directions).
+[See the whole program.](./Ex4DirectedChannels.hs)
 
 ## Select
 
@@ -311,7 +311,7 @@ Let's run the full code:
 
 Run it a few times to make sure the random number generator is working.
 
-[See the whole program](./Ex5Select.hs) and the [GbE chapter on select](https://gobyexample.com/select).
+[See the whole program.](./Ex5Select.hs)
 
 ## Timeouts
 
@@ -422,7 +422,7 @@ So, running our demo program, we see that unfortunately we time out both times:
     Too slow!
     Too slow!
 
-[See the whole program](./Ex6Timeouts.hs) and the [GbE chapter on timeouts](https://gobyexample.com/timeouts).
+[See the whole program.](./Ex6Timeouts.hs)
 
 ## Composable select
 
