@@ -8,8 +8,16 @@ See the [readme](../readme.md) for details on reading and running this tutorial.
 
 # 1. Base only
 
-The sections in this chapter will introduce you to what might be described as GHC's concurrency primitives, on the same level as Go's built-in language features.
+The sections in this chapter will introduce you to what might be described as GHC's concurrency primitives.
 This section explores what you can get if you just install GHC, for example from the Ubuntu package repositories.
+The availability of these features is comparable to built-in language features like Go's goroutines, or `pthread.h` which is available by default on almost any POSIX platform.
+
+> ##### Is it really built-in?
+> 
+> An important thing to note is that most of the concurrency features I'll be talking about are specific to GHC, which is just one Haskell compiler, and are not specified in the Haskell language standard.
+> GHC's runtime has support for lightweight 'green' threads and mutexed variables, which I'm about to introduce.
+> These primitives are then used to build up abstrations like channels.
+> It also has primitives used to implement software transactional memory (STM), but the `base` library that comes with GHC does not include libraries that use these primitives yet.
 
 ## Contents
 
@@ -23,15 +31,16 @@ This section explores what you can get if you just install GHC, for example from
 
 ## Basic threading
 
-Since this is the first tutorial, I'm going to explain a couple of things I'll skim over the rest of the time.
-Each of the files in [this directory](.) is a module, and as such it starts with a module definition:
+Since this is the first tutorial, I'm going to explain a couple of things that I'll skim over in future sections.
+Each of the files in [this directory](.) is a module, and starts with a module definition:
 
 ``` haskell
 module Ex1Threads where
 ```
 
 We then must import any libraries we're going to use.
-In this small program, we'll learn how to use `forkIO`, which is the Haskell equivalent of goroutines, or any lightweight 'green thread' you might know of from other languages.
+In this small program, we'll learn how to use `forkIO`, which is used to stat a new runtime thread.
+We'll import the `forkIO` function from the `Control.Concurrent` module, along with `threadDelay`, which we'll use to make threads slow down so we can observe interleaving.
 
 ``` haskell
 import Control.Concurrent (forkIO, threadDelay)
@@ -54,14 +63,14 @@ print3MessagesFrom name = for_ [1..3] printMessage
 > And, you may also be wondering, why did we have to import it?
 > Many of Haskell's 'control structures' are actually just regular functions, and `for_` is no exception.
 
-We can call this in the usual synchronous fashion inside any other `IO` action:
+We can call this in the usual synchronous fashion inside any other `IO` action, like the `main` action:
 
 ``` haskell
 main = do
     print3MessagesFrom "main"
 ```
 
-However, to fork a thread and run a function concurrently with the main thread, we can use the `forkIO` function on our `IO` action:
+Or, we can run it concurrently using `forkIO`:
 
 ``` haskell
     forkIO (print3MessagesFrom "fork")
@@ -69,7 +78,7 @@ However, to fork a thread and run a function concurrently with the main thread, 
 
 This non-blocking call starts up a new lightweight thread and runs the given action.
 The main thread can then go on and do other things.
-For example, we could fork another thread, and watch their outputs interleave:
+For example, we could fork _another_ thread, and watch their outputs interleave:
 
 ``` haskell
     forkIO (do
@@ -78,13 +87,14 @@ For example, we could fork another thread, and watch their outputs interleave:
         putStrLn "ending!")
 ```
 
-All we need to do now is define `sleepMs`:
+I've left the definition of `sleepMs` til now.
+`threadDelay` takes a delay in microseconds, which isn't super helpful, so I like to use this function in examples:
 
 ``` haskell
 sleepMs n = threadDelay (n * 1000)
 ```
 
-And we can run our program!
+And now we can run our program!
 
     $ runhaskell Ex1Threads.hs
     main number 1
