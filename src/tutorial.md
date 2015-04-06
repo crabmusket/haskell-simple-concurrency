@@ -38,9 +38,9 @@ Each of the files in [this directory](.) is a module, and starts with a module d
 module Ex1Threads where
 ```
 
-We then must import any libraries we're going to use.
-In this small program, we'll learn how to use `forkIO`, which is used to stat a new runtime thread.
-We'll import the `forkIO` function from the `Control.Concurrent` module, along with `threadDelay`, which we'll use to make threads slow down so we can observe interleaving.
+Now we import all the libraries we're going to make use of.
+This program willintroduce you to `forkIO`, which is used to start new runtime threads.
+Let's import the `forkIO` function from the `Control.Concurrent` module, along with `threadDelay`, which we'll use to make threads slow down so we can observe interleaving.
 
 ``` haskell
 import Control.Concurrent (forkIO, threadDelay)
@@ -50,7 +50,7 @@ import Data.Foldable (for_)
 With those imports out of the way, let's write a simple `IO` action that prints some stuff:
 
 ``` haskell
-print3MessagesFrom name = for_ [1..3] printMessage
+printMessagesFrom name = for_ [1..3] printMessage
     where printMessage i = do
             putStrLn (name ++ " number " ++ show i)
             sleepMs 1
@@ -67,13 +67,13 @@ We can call this in the usual synchronous fashion inside any other `IO` action, 
 
 ``` haskell
 main = do
-    print3MessagesFrom "main"
+    printMessagesFrom "main"
 ```
 
 Or, we can run it concurrently using `forkIO`:
 
 ``` haskell
-    forkIO (print3MessagesFrom "fork")
+    forkIO (printMessagesFrom "fork")
 ```
 
 This non-blocking call starts up a new lightweight thread and runs the given action.

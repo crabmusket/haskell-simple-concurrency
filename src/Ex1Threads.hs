@@ -5,10 +5,10 @@ import Data.Foldable (for_)
 
 main = do
     -- Synchronously perform some work.
-    print3MessagesFrom "main"
+    printMessagesFrom "main"
 
     -- Fork a new thread to do some work in the background.
-    forkIO (print3MessagesFrom "fork")
+    forkIO (printMessagesFrom "fork")
 
     -- Fork another thread using an inline function!
     forkIO (do
@@ -20,7 +20,7 @@ main = do
     sleepMs 10
 
 -- A simple function that prints three messages with a little delay between them.
-print3MessagesFrom name = for_ [1..3] printMessage
+printMessagesFrom name = for_ [1..3] printMessage
     where printMessage i = do
             putStrLn (name ++ " number " ++ show i)
             sleepMs 1
