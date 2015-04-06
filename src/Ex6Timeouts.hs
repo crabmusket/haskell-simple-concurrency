@@ -4,7 +4,7 @@ import Ex1Threads (sleepMs)
 import Ex5Select (selectNow)
 
 import Control.Concurrent (forkIO, killThread)
-import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)
+import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar, tryPutMVar)
 import Control.Monad (when)
 
 main = do
@@ -36,7 +36,8 @@ selectNowOrTimeout delay vars = do
     -- This thread patiently waits for the actual select that we want to perform.
     waiter <- forkIO (do
         value <- selectNow vars
-        tryPutMVar result (Just value))
+        tryPutMVar result (Just value)
+        return ())
     -- This thread acts as a watchdog, and kills the other thread if it takes too long.
     killer <- forkIO (do
         sleepMs delay

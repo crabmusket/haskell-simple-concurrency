@@ -3,7 +3,7 @@ module Ex5Select where
 import Ex1Threads (sleepMs)
 
 import Control.Concurrent (forkIO, killThread)
-import Control.Concurrent.MVar (newEmptyMVar, takeMVar, tryPutMVar)
+import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar, tryPutMVar)
 import Data.Foldable (for_)
 import System.Random (randomRIO)
 
@@ -23,7 +23,8 @@ selectNow vars = do
     winner <- newEmptyMVar
     for_ vars (\var -> forkIO (do
         val <- takeMVar var
-        tryPutMVar winner val))
+        tryPutMVar winner val
+        return ()))
     takeMVar winner
 
 -- These workers simply return their name when they're done doing work.

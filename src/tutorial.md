@@ -280,7 +280,8 @@ selectNow vars = do
     winner <- newEmptyMVar
     for_ vars (\var -> forkIO (do
         val <- takeMVar var
-        tryPutMVar winner val))
+        tryPutMVar winner val
+        return ()))
     takeMVar winner
 ```
 
