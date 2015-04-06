@@ -110,18 +110,13 @@ And now we can run our program!
 
 ## Thread synchronisation with MVars
 
-At this point in Go by Example, the reader [is introduced](https://gobyexample.com/channels) to the concept of channels, which are used to pass a message between threads.
-Here I must diverge slightly from my source material, and instead of introducing channels, introduce the humble `MVar`, which is used for that purpose in Haskell.
-
 An `MVar` is a box which may hold a single element, or may be empty.
-It is safe to access from multiple threads with its operations `takeMVar`, which takes a value out of the box if one is there, and `putMVar`, which puts a value into the box if there is none.
+The documentation calls it a 'mutable variable', but I prefer 'mutexed variable' for a mnemonic.
+The box being empty equates to the value being 'locked', unable to be modified.
 
-`MVar` lives in a library, much like `forkIO`:
-
-``` haskell
-import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)
-```
-
+It is safe to access an `MVar` from multiple threads, unline an `IORef`.
+`takeMVar` removes the value from the box if one is there, and otherwise blocks until the box is full.
+`putMVar` puts a value into the box if there is none, and otherwise blocks until the box is empty.
 Without further ado, let's see it in action!
 
 ``` haskell
@@ -144,13 +139,6 @@ Running this, you should see the following output:
     Waiting...
     Sending a message!
     Received message: Do the thing!
-
-I should note here that `takeMVar` and `putMVar` both block if the `MVar` is absent or present respectively, much in the same way that pulling from a Go channel blocks until a value is put into it.
-
-However, there is a significant difference to Go here, in that an `MVar` is effectively a single-element buffer, whereas Go channels are completely unbuffered by default.
-
-That is, if you write to a Go channel and nobody is listening, you will block.
-If you put to an `MVar` which is empty, then you will not block, and another thread can read that value at its leisure.
 
 [See the whole program.](./Ex2MVars.hs)
 
