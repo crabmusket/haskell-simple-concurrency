@@ -146,6 +146,7 @@ Running this, you should see the following output:
 
 Now that we've talked about `MVar`s, let's get up to speed with channels in Haskell.
 A channel, as I'm sure you're aware, is a way to pass several messages between threads.
+Whereas an `MVar` can only contain a single value, a channel can have a whole stream of values.
 Values are written into the channel, and can be read out of it in a first-in-first-out fashion.
 
 Haskell's channel implementation, `Chan`, lives in:
@@ -184,22 +185,21 @@ Or, more concisely:
 > 
 > If you did, you'd have seen a type error along the lines of `couldn't match type 'IO [Char]' with '[Char]'`.
 > What it's saying is that `putStrLn` expects a string (a list of `Char`), but you've given it an `IO` action that returns a string.
-> The first solution is to _bind_ that `IO` action to get the string out of it, which is what the `<-` operator does in Haskell.
-> The second way around it is to use another way of binding using the `=<<` operator.
+> The solution is to _bind_ that `IO` action to get the string out of it, which is what the `<-` operator does in Haskell.
+> The `=<<` operator is simply another way of writing the same equation.
 > 
 > If you squint, it looks a bit like regular function application.
 > I won't go into too much depth here.
-> 
 > If you need a gentler and more in-depth introduction to `IO` actions, have a read of [this excellent article](http://blog.jle.im/entry/first-class-statements).
 
 [See the whole program.](./Ex3Channels.hs)
 
 ## Directed channels
 
-At this point, Go by Example has a chapter on channel directions, which is a feature of Go allowing you to restrict a channel to be read-only or write-only to a function you call.
+Go by Example has a chapter on channel directions, which is a feature of Go allowing you to restrict a channel to be read-only or write-only to a function you call.
 That is, you can pass in a regular channel to a function which is only allowed to, for example, read from that channel.
 
-Initially I thought about just not translating this example, since Haskell does not have the same ability to restrict its channels.
+Initially I thought about not translating this example, since Haskell does not have the same ability to restrict its channels.
 Then I realised that I was being dumb, and of course Haskell does.
 Using types to rule out errors is what Haskell is _all about_.
 
@@ -237,8 +237,7 @@ How did we make this happen?
 
 Essentially, we make a wrapper type around `Chan` and only define certain operations on it.
 We also take care not to export the constructor of this wrapper type, so that you can't pattern-match a normal `Chan` out of a `ReadOnlyChan` or `WriteOnlyChan`.
-
-The details of out are in [DirectedChannels.hs](./DirectedChannels.hs) should you care to read about them.
+The details are in [DirectedChannels.hs](./DirectedChannels.hs) should you care to read about them.
 
 The output of this program is probably pretty obvious:
 
