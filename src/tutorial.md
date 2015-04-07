@@ -24,6 +24,7 @@ The availability of these features is comparable to built-in language features l
  * [Basic threading](#basic-threading)
  * [Thread synchronisation with MVars](#thread-synchronisation-with-mvars)
  * [Channels](#channels)
+ * [Duplicating channels](#duplicating-channels)
  * [Select](#select)
  * [Timeouts](#timeouts)
  * [Composable select](#composable-select)
@@ -192,6 +193,62 @@ Or, more concisely:
 > If you need a gentler and more in-depth introduction to `IO` actions, have a read of [this excellent article](http://blog.jle.im/entry/first-class-statements).
 
 [See the whole program.](./Ex3Channels.hs)
+
+## Duplicating channels
+
+Data pushed through a channel is not duplicated - that is, if two threads are waiting for a channel, and one piece of data is put into the channel, only one thread will see the data.
+Here's a quick function that demonstrates that property:
+
+```haskell
+nonDuplicatedTest = do
+    messages <- newChan
+    forkIO (messageReader messages "First")
+    forkIO (messageReader messages "Second")
+    writeChan messages "Hi!"
+
+messageReader channel name = do
+    msg <- readChan channel
+    putStrLn (name ++ " read: " ++ msg)
+```
+
+If you were to run this, you'd see something like:
+
+    First read: Hi!
+
+The message is only printed by one of the threads.
+If we want 'broadcast' behaviour, where all threads have access to the messages on a channel, we need to use `dupChan`.
+As in:
+
+```haskell
+duplicatedTest = do
+    broadcast <- newChan
+    forkIO (broadcastReader broadcast "Third")
+    forkIO (broadcastReader broadcast "Fourth")
+    writeChan broadcast "Bye!"
+
+broadcastReader channel name = do
+    channel' <- dupChan channel
+    messageReader channel' name
+```
+
+Let's run both of these two examples at once:
+
+```haskell
+main = do
+    nonDuplicatedTest
+    duplicatedTest
+    sleepMs 5
+```
+
+    $ runhaskell Ex4DuplicatingChannels.hs
+    First read: Hi!
+    Third read: Bye!
+    Fourth read: Bye!
+
+Note that sometimes you may see `Second` getting `Hi!`, or you may see `Hi!` being printed after `Bye!`.
+This is due to the vagaries of thread execution, since we didn't do any synchronisation in these examples.
+
+[See the whole program.](./Ex4DuplicatingChannels.hs)
 
 ## Select
 
