@@ -231,6 +231,8 @@ broadcastReader channel name = do
     messageReader channel' name
 ```
 
+Here, `broadcastReader` is using `dupChan` to create a _duplicate channel_ of `channel`, which means that every message sent over the original channel is duplicated to a new channel.
+It then involes the rest of `messageReader` on that new channel.
 Let's run both of these two examples at once:
 
 ```haskell
@@ -247,6 +249,7 @@ main = do
 
 Note that sometimes you may see `Second` getting `Hi!`, or you may see `Hi!` being printed after `Bye!`.
 This is due to the vagaries of thread execution, since we didn't do any synchronisation in these examples.
+(It's also why I added a `sleepMs` in there - just to make sure the main thread waits for all the messages to filter through.)
 
 [See the whole program.](./Ex4DuplicatingChannels.hs)
 
