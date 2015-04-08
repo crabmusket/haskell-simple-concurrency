@@ -2,7 +2,7 @@
 
 This tutorial will introduce you to simple mechanisms for concurrency in Haskell.
 It's a fairly direct translation of the concurrency-related chapters of [Go by Example](http://gobyexample.com), which I found to be a great reference to Go's concurrency primitives.
-You can follow along with [the tutorial](./src/tutorial.md), clone this repository and run the code locally, or open it up [in FP Complete's online Haskell IDE](https://www.fpcomplete.com/user/eightyeight/simple-concurrency) to edit and run the code yourself.
+You can follow along with [the tutorial](./src/tutorial.md), clone this repository and run the code locally, or open it up [in FP Complete's online Haskell IDE](https://www.fpcomplete.com/user/eightyeight/concurrency-by-example) to edit and run the code yourself.
 
 I wrote this to:
 
