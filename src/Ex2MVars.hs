@@ -6,14 +6,14 @@ import Control.Concurrent (forkIO)
 import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)
 
 main = do
-    message <- newEmptyMVar
+    result <- newEmptyMVar
 
     forkIO (do
         -- Pretend there is some actual work to do.
         sleepMs 5
-        putStrLn "Sending message!"
-        putMVar message "Do the thing!")
+        putStrLn "Calculated result!"
+        putMVar result 42)
 
     putStrLn "Waiting..."
-    result <- takeMVar message
-    putStrLn ("Received message: " ++ result)
+    value <- takeMVar result
+    putStrLn ("The answer is: " ++ show value)

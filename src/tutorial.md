@@ -109,7 +109,7 @@ And now we can run our program!
 
 An `MVar` is a box which may hold a single element, or may be empty.
 The documentation calls it a 'mutable variable', but I prefer 'mutexed variable' for a mnemonic.
-The box being empty equates to the value being 'locked', unable to be modified.
+The `MVar` being empty equates to the value being 'locked', unable to be modified.
 
 It is safe to access an `MVar` from multiple threads, unline an `IORef`.
 `takeMVar` removes the value from the box if one is there, and otherwise blocks until the box is full.
@@ -118,24 +118,24 @@ Without further ado, let's see it in action!
 
 ``` haskell
 main = do
-    message <- newEmptyMVar
+    result <- newEmptyMVar
 
     forkIO (do
         sleepMs 5
-        putStrLn "Sending message!"
-        putMVar message "Do the thing!")
+        putStrLn "Calculated result!"
+        putMVar result 42)
 
     putStrLn "Waiting..."
-    result <- takeMVar message
-    putStrLn ("Received message: " ++ result)
+    value <- takeMVar result
+    putStrLn ("The answer is: " ++ show value)
 ```
 
 Running this, you should see the following output:
 
     $ runhaskell Ex2MVars.hs
     Waiting...
-    Sending a message!
-    Received message: Do the thing!
+    Calculated result!
+    The answer is: 42
 
 [See the whole program.](./Ex2MVars.hs)
 
