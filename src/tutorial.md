@@ -23,6 +23,7 @@ The availability of these features is comparable to built-in language features l
 
  * [Basic threading](#basic-threading)
  * [Thread synchronisation with MVars](#thread-synchronisation-with-mvars)
+ * [Sharing state with MVars](#sharing-state-with-mvars)
  * [Channels](#channels)
  * [Duplicating channels](#duplicating-channels)
 
@@ -138,6 +139,41 @@ Running this, you should see the following output:
     The answer is: 42
 
 [See the whole program.](./Ex2MVars.hs)
+
+## Sharing state with MVars
+
+In the [previous example](#thread-synchronisation-with-mvars), we used an `MVar` as a way to wait for a concurrent action's result.
+Sometimes we want long-running actions to share state, and we want to make sure they don't run into race conditions when modifying that state.
+`MVars` can also fill this role, though we'll see a much better way to do it when we look at STM later.
+
+For now, we'll reproduce a classic concurrency example: we have a single counter, which multiple threads try to increment several times.
+In the presence of race conditions, errors will mean often the final result isn't what you would expect, if you were to run each thread synchronously.
+
+```haskell
+main = do
+    counter <- newMVar 0
+
+    let increment = modifyMVar_ counter (\c -> return $! c + 1)
+    let incrementer = do
+        replicateM 1000 increment
+        return ()
+
+    threads <- replicateM 5 (forkIO incrementer)
+
+    sleepMs 10
+    count <- takeMVar counter
+    print count
+```
+
+Here, `increment` uses `modifyMVar_` to apply a function to the contents of an `MVar`, when it exists.
+This operation blocks, naturally, and also blocks other threads from operating on the `MVar`'s contents at the same time.
+
+`increment` uses `$!`, which is a _strict_ form of function application, to avoid simply storing a huge `(0 + (1 + (1 + ...` think inside `counter`.
+This strict application ensures that `c + 1` is evaluated before it is stored in the `MVar`.
+
+Note that in this case, our application is essentially single-threaded, because all threads block on `counter`.
+So we gain no _time_ efficiency from using strict application (`$!`) - we could just as easily build up a huge thunk, then have the main thread evaluate it when we `print count`.
+However, this costs memory, so evaluating the counter strictly at every step makes the program more _space_ efficient.
 
 ## Channels
 
