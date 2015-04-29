@@ -37,7 +37,7 @@ module Threads where
 ```
 
 Now we import all the libraries we're going to make use of.
-This program willintroduce you to `forkIO`, which is used to start new runtime threads.
+This program will introduce you to `forkIO`, which is used to start new runtime threads.
 Let's import the `forkIO` function from the `Control.Concurrent` module, along with `threadDelay`, which we'll use to make threads slow down so we can observe interleaving.
 
 ``` haskell
@@ -167,10 +167,7 @@ main = do
     print count
 ```
 
-Here, `increment` uses `modifyMVar_` to apply a function to the contents of an `MVar`, when it exists.
-This operation blocks, naturally, and also blocks other threads from operating on the `MVar`'s contents at the same time.
-
-`increment` uses `$!`, which is a _strict_ form of function application, to avoid simply storing a huge `(0 + (1 + (1 + ...` think inside `counter`.
+`increment` uses `$!`, which is a _strict_ form of function application, to avoid simply storing a huge `(0 + (1 + (1 + ...` thunk inside `counter`.
 This strict application ensures that `c + 1` is evaluated before it is stored in the `MVar`.
 
 Note that in this case, our application is essentially single-threaded, because all threads block on `counter`.
