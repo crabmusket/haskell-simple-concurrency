@@ -1,6 +1,6 @@
-module Ex4DuplicatingChannels where
+module DuplicatingChannels where
 
-import Ex1Threads (sleepMs)
+import Threads (sleepMs)
 
 import Control.Concurrent (forkIO)
 import Control.Concurrent.Chan (newChan, writeChan, readChan, dupChan)

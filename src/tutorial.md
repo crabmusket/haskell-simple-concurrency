@@ -33,7 +33,7 @@ Since this is the first tutorial, I'm going to explain a couple of things that I
 Each of the files in [this directory](.) is a module, and starts with a module definition:
 
 ``` haskell
-module Ex1Threads where
+module Threads where
 ```
 
 Now we import all the libraries we're going to make use of.
@@ -94,7 +94,7 @@ sleepMs n = threadDelay (n * 1000)
 
 And now we can run our program!
 
-    $ runhaskell Ex1Threads.hs
+    $ runhaskell Threads.hs
     main number 1
     main number 2
     main number 3
@@ -104,7 +104,7 @@ And now we can run our program!
     ending!
     fork number 3
 
-[See the whole program.](./Ex1Threads.hs)
+[See the whole program.](./Threads.hs)
 
 ## Thread synchronisation with MVars
 
@@ -133,12 +133,12 @@ main = do
 
 Running this, you should see the following output:
 
-    $ runhaskell Ex2MVars.hs
+    $ runhaskell MVars.hs
     Waiting...
     Calculated result!
     The answer is: 42
 
-[See the whole program.](./Ex2MVars.hs)
+[See the whole program.](./MVars.hs)
 
 ## Sharing state with MVars
 
@@ -153,14 +153,16 @@ In the presence of race conditions, errors will mean often the final result isn'
 main = do
     counter <- newMVar 0
 
-    let increment = modifyMVar_ counter (\c -> return $! c + 1)
-    let incrementer = do
-        replicateM 1000 increment
-        return ()
+    let increment = do
+            count <- takeMVar counter
+            putMVar counter $! count + 1
+        incrementer = do
+            replicateM 1000 increment
+            return ()
 
     threads <- replicateM 5 (forkIO incrementer)
 
-    sleepMs 10
+    sleepMs 100
     count <- takeMVar counter
     print count
 ```
@@ -174,6 +176,13 @@ This strict application ensures that `c + 1` is evaluated before it is stored in
 Note that in this case, our application is essentially single-threaded, because all threads block on `counter`.
 So we gain no _time_ efficiency from using strict application (`$!`) - we could just as easily build up a huge thunk, then have the main thread evaluate it when we `print count`.
 However, this costs memory, so evaluating the counter strictly at every step makes the program more _space_ efficient.
+
+Let's give this example a go:
+
+    $ runhaskell MVarSharedState.hs
+    5000
+
+[See the whole program.](./MVarSharedState.hs)
 
 ## Channels
 
@@ -225,7 +234,7 @@ Or, more concisely:
 > I won't go into too much depth here.
 > If you need a gentler and more in-depth introduction to `IO` actions, have a read of [this excellent article](http://blog.jle.im/entry/first-class-statements).
 
-[See the whole program.](./Ex3Channels.hs)
+[See the whole program.](./Channels.hs)
 
 ## Duplicating channels
 
@@ -275,7 +284,7 @@ main = do
     sleepMs 5
 ```
 
-    $ runhaskell Ex4DuplicatingChannels.hs
+    $ runhaskell DuplicatingChannels.hs
     First read: Hi!
     Third read: Bye!
     Fourth read: Bye!
@@ -284,7 +293,7 @@ Note that sometimes you may see `Second` getting `Hi!`, or you may see `Hi!` bei
 This is due to the vagaries of thread execution, since we didn't do any synchronisation in these examples.
 (It's also why I added a `sleepMs` in there - just to make sure the main thread waits for all the messages to filter through.)
 
-[See the whole program.](./Ex4DuplicatingChannels.hs)
+[See the whole program.](./DuplicatingChannels.hs)
 
 # 2. Haskell Platform only
 

@@ -1,4 +1,4 @@
-module Ex3Channels where
+module Channels where
 
 import Control.Concurrent.Chan (newChan, writeChan, readChan)
 

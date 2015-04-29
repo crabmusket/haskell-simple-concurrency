@@ -1,4 +1,4 @@
-module Ex1Threads where
+module Threads where
 
 import Control.Concurrent (forkIO, threadDelay)
 import Data.Foldable (for_)

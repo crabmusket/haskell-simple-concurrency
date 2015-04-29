@@ -1,6 +1,6 @@
-module Ex2MVars where
+module MVars where
 
-import Ex1Threads (sleepMs)
+import Threads (sleepMs)
 
 import Control.Concurrent (forkIO)
 import Control.Concurrent.MVar (newEmptyMVar, takeMVar, putMVar)
