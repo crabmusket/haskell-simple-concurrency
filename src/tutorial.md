@@ -29,6 +29,8 @@ The availability of these features is comparable to built-in language features l
 
 ## Basic threading
 
+[See the whole program.](./Threads.hs)
+
 Since this is the first tutorial, I'm going to explain a couple of things that I'll skim over in future sections.
 Each of the files in [this directory](.) is a module, and starts with a module definition:
 
@@ -104,9 +106,9 @@ And now we can run our program!
     ending!
     fork number 3
 
-[See the whole program.](./Threads.hs)
-
 ## Thread synchronisation with MVars
+
+[See the whole program.](./MVars.hs)
 
 An `MVar` is a box which may hold a single element, or may be empty.
 The documentation calls it a 'mutable variable', but I prefer 'mutexed variable' for a mnemonic.
@@ -138,9 +140,9 @@ Running this, you should see the following output:
     Calculated result!
     The answer is: 42
 
-[See the whole program.](./MVars.hs)
-
 ## Sharing state with MVars
+
+[See the whole program.](./MVarSharedState.hs)
 
 In the [previous example](#thread-synchronisation-with-mvars), we used an `MVar` as a way to wait for a concurrent action's result.
 Sometimes we want long-running actions to share state, and we want to make sure they don't run into race conditions when modifying that state.
@@ -179,9 +181,9 @@ Let's give this example a go:
     $ runhaskell MVarSharedState.hs
     5000
 
-[See the whole program.](./MVarSharedState.hs)
-
 ## Channels
+
+[See the whole program.](./Channels.hs)
 
 Now that we've talked about `MVar`s, let's get up to speed with channels in Haskell.
 A channel, as I'm sure you're aware, is a way to pass several messages between threads.
@@ -231,9 +233,9 @@ Or, more concisely:
 > I won't go into too much depth here.
 > If you need a gentler and more in-depth introduction to `IO` actions, have a read of [this excellent article](http://blog.jle.im/entry/first-class-statements).
 
-[See the whole program.](./Channels.hs)
-
 ## Duplicating channels
+
+[See the whole program.](./DuplicatingChannels.hs)
 
 Data pushed through a channel is not duplicated - that is, if two threads are waiting for a channel, and one piece of data is put into the channel, only one thread will see the data.
 Here's a quick function that demonstrates that property:
@@ -289,8 +291,6 @@ main = do
 Note that sometimes you may see `Second` getting `Hi!`, or you may see `Hi!` being printed after `Bye!`.
 This is due to the vagaries of thread execution, since we didn't do any synchronisation in these examples.
 (It's also why I added a `sleepMs` in there - just to make sure the main thread waits for all the messages to filter through.)
-
-[See the whole program.](./DuplicatingChannels.hs)
 
 # 2. Haskell Platform only
 
