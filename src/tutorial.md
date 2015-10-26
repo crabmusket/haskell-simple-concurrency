@@ -295,5 +295,12 @@ This is due to the vagaries of thread execution, since we didn't do any synchron
 # 2. Haskell Platform only
 
 In this section, we'll expand our horizons and start using some libraries that come with the [Haskell Platform](https://www.haskell.org/platform/).
+Specifically, we'll cover [async](http://hackage.haskell.org/package/async), and dip our toes into [stm](http://hackage.haskell.org/package/stm).
 Note that if you installed GHC without the platform, you may need to `cabal install` some libraries.
 I'll mention when you should do this as we go.
+
+> ##### What about `parallel`?
+>
+> The Haskell platform also includes the [parallel](http://hackage.haskell.org/package/parallel) library, but we won't cover it.
+> I'm limiting this tutorial to showing examples of concurrency, which is of course [different to parallelism](http://chimera.labs.oreilly.com/books/1230000000929/ch01.html#sec_terminology).
+> If you're interested in learning how to parallelise pure or non-concurrent operations, I highly recommend diving into the excellent [parallel and concurrent programming in Haskell](http://community.haskell.org/~simonmar/pcph/).
