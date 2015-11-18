@@ -1,6 +1,6 @@
 # Read me first
 
-See the [readme](../readme.md) for details on reading and running this tutorial.
+See the [readme](../readme.md) for details on how to read and run this tutorial.
 
  * [Chapter 1. Base only](#1-base-only)
  * Chapter 2. Haskell Platform only
