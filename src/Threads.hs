@@ -13,7 +13,7 @@ main = do
     -- Fork another thread using an inline function!
     forkIO (do
         putStrLn "starting!"
-        sleepMs 2
+        sleepMs 5
         putStrLn "ending!")
 
     -- Wait for threads to finish.
@@ -22,8 +22,8 @@ main = do
 -- A simple function that prints three messages with a little delay between them.
 printMessagesFrom name = for_ [1..3] printMessage
     where printMessage i = do
-            putStrLn (name ++ " number " ++ show i)
             sleepMs 1
+            putStrLn (name ++ " number " ++ show i)
 
 -- A utility function - threadDelay takes microseconds, which is slightly annoying.
 sleepMs n = threadDelay (n * 1000)

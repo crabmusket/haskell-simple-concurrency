@@ -40,7 +40,7 @@ module Threads where
 
 Now we import all the libraries we're going to make use of.
 This program will introduce you to `forkIO`, which is used to start new runtime threads.
-Let's import the `forkIO` function from the `Control.Concurrent` module, along with `threadDelay`, which we'll use to make threads slow down so we can observe interleaving.
+Let's import the `forkIO` function from the `Control.Concurrent` module, along with `threadDelay`, which we'll use to make threads slow down so we can see them acting simultaneously.
 
 ``` haskell
 import Control.Concurrent (forkIO, threadDelay)
@@ -52,8 +52,8 @@ With those imports out of the way, let's write a simple `IO` action that prints 
 ``` haskell
 printMessagesFrom name = for_ [1..3] printMessage
     where printMessage i = do
-            putStrLn (name ++ " number " ++ show i)
             sleepMs 1
+            putStrLn (name ++ " number " ++ show i)
 ```
 
 > ##### Why does `for` have an underscore?
@@ -78,12 +78,12 @@ Or, we can run it concurrently using `forkIO`:
 
 This non-blocking call starts up a new lightweight thread and runs the given action.
 The main thread can then go on and do other things.
-For example, we could fork _another_ thread, and watch their outputs interleave:
+For example, we could fork _another_ thread, and watch their outputs appear interleaved with each other:
 
 ``` haskell
     forkIO (do
         putStrLn "starting!"
-        sleepMs 2
+        sleepMs 5
         putStrLn "ending!")
 ```
 
@@ -100,11 +100,16 @@ And now we can run our program!
     main number 1
     main number 2
     main number 3
-    fork number 1
     starting!
+    fork number 1
     fork number 2
-    ending!
     fork number 3
+    ending!
+
+> ##### A note on interleaving
+> 
+> If you play with the placement of the calls to `sleepMs` in this example, you might notice that sometimes words get mangled.
+> Haskell's output functions aren't actually atomic, so if two threads try to print at the same time, you might see only a few characters printed from one thread before another thread takes over and prints a few.
 
 ## Thread synchronisation with MVars
 
