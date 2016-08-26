@@ -44,12 +44,12 @@ In Go, both of these operations refer specifically to channels, as far as I'm aw
 This tutorial has covered some of the basic concurrency primitives available in Haskell/GHC, but I've stayed away from mentioning any of the other resources out there, or libraries you could use to simplify your code and amplify its power.
 So, I'll do that now.
 
-For a far more in-depth look at a variety of techniques and libraries for doing concurrency and parallelism in Haskell, [Parellel and Concurrent Programming in Haskell](http://community.haskell.org/~simonmar/pcph/) is the authority, and is available for free online!
+For a far more in-depth look at a variety of techniques and libraries for doing concurrency and parallelism in Haskell, [Parallel and Concurrent Programming in Haskell](http://community.haskell.org/~simonmar/pcph/) is the authority, and is available for free online!
 The book is written by the author of both the [async](https://hackage.haskell.org/package/async) package and GHC's parallel runtime itself.
 
 If you're keen to use channels in your application, then you might want to take a look at the [unagi-chan](https://hackage.haskell.org/package/unagi-chan) library, which provides super-performant channels, and even has directed channels built-in.
 
-And if you want a higher level of composable concurrency, then [STM](https://wiki.haskell.org/Software_transactional_memory) is for you.
+And if you want a higher level of composable concurrency, then [stm](https://wiki.haskell.org/Software_transactional_memory) is for you.
 It stands for software transactional memory, and it's all the rage these days.
 This wouldn't be a Haskell tutorial if I didn't link you to a research paper, so [here's](http://research.microsoft.com/pubs/67418/2005-ppopp-composable.pdf) the classic paper introducing Haskell's implementation of STM.
 Trust me, it's a pretty easy read!
