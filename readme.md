@@ -16,20 +16,20 @@ I wrote this to:
 
 ## Running the code
 
-If you've cloned this repository to run locally, once you have GHC or the Haskell platform installed, you can run any of the example files by entering, for example,
+If you've cloned this repository to run locally, once you have Stack, or plain GHC/Haskell platform installed, you can run any of the example files by entering, for example,
 
-    $ runhaskell src/Ex1Threads.hs
+    $ stack runhaskell Threads.hs
 
 at the command-line.
 You can also open modules in GHCI to play around with them in a REPL:
 
-    $ ghci
-    ghci> :load src/Ex1Threads.hs
-    ghci> main
+    $ stack ghci
+    > :load src/Threads.hs
+    > main
 
 Note that you cannot compile the example files directly, but I have provided a `Main.hs` file which runs all the examples, and which can be compiled into an executable if you wish.
 
-    $ ghc --make -threaded Main.hs
+    $ stack ghc --make -threaded Main.hs
     $ ./Main
 
 ## A brief word on syntax
